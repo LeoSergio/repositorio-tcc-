@@ -1,0 +1,83 @@
+# =============================================================
+#  .gitignore — Repositório TCC (Next.js + Supabase)
+#  Gerado em: 2026-11-18
+# =============================================================
+
+# ── Variáveis de ambiente / segredos ─────────────────────────
+# Nunca versionar arquivos .env com valores reais.
+# Apenas .env.example (sem valores sensíveis) deve ser commitado.
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+# Exceção explícita: arquivo de exemplo sem segredos
+!.env.example
+
+# ── Dependências ──────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# ── Build Next.js ─────────────────────────────────────────────
+.next/
+out/
+build/
+
+# ── Testes / cobertura ────────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ── Supabase local (CLI) ──────────────────────────────────────
+# Apenas schema.sql deve subir; dados locais e migrations
+# geradas automaticamente pelo CLI ficam fora do repo.
+supabase/.branches/
+supabase/.temp/
+
+# ── Certificados e chaves ─────────────────────────────────────
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# ── Logs ──────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ── Editores e IDEs ───────────────────────────────────────────
+.vscode/settings.json
+.vscode/launch.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ── Sistema operacional ───────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Vercel / deploy ───────────────────────────────────────────
+.vercel
+
+# ── TypeScript ────────────────────────────────────────────────
+*.tsbuildinfo
+next-env.d.ts
+
+# ── Arquivos temporários / cache ──────────────────────────────
+*.tmp
+*.temp
+.cache/
