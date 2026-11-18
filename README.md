@@ -124,9 +124,9 @@ Outras medidas:
 3. **Configure as variáveis de ambiente.** Crie um arquivo `.env.local` na raiz:
 
    ```env
-   NEXT_PUBLIC_SUPABASE_URL=https://SEU-PROJETO.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=sua-chave-publica
-   SUPABASE_SERVICE_ROLE_KEY=sua-chave-de-servico
+    NEXT_PUBLIC_SUPABASE_URL=
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+    SUPABASE_SECRET_KEY=
    ```
 
    > O nome da chave pública (`anon` ou `publishable`) varia conforme o painel do Supabase. Use o que ele mostrar e ajuste o nome no código.
