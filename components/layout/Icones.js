@@ -79,3 +79,26 @@ export const IconeDocumento = (p) => (
     <path d="M14 3.5V8h4M8.5 13h7M8.5 16.5h7" />
   </Base>
 )
+export const IconeCasa = (p) => (
+  <Base {...p}>
+    <path d="M4 11.5 12 4.5l8 7" />
+    <path d="M6 10.5V19a1 1 0 0 0 1 1h3.5v-5h3v5H17a1 1 0 0 0 1-1v-8.5" />
+  </Base>
+)
+export const IconeInfo = (p) => (
+  <Base {...p}>
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="M12 11v5.5" />
+    <path d="M12 7.8h.01" />
+  </Base>
+)
+export const IconeMenu = (p) => (
+  <Base {...p}>
+    <path d="M4.5 7h15M4.5 12h15M4.5 17h15" />
+  </Base>
+)
+export const IconeFechar = (p) => (
+  <Base {...p}>
+    <path d="m6 6 12 12M18 6 6 18" />
+  </Base>
+)
