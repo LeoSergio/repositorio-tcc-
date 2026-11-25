@@ -25,12 +25,12 @@ export default async function Home() {
 
   return (
     <>
-      <section className="bg-gradient-to-r from-marca to-[#0369a1] px-4 py-16 text-center text-white sm:px-6">
+      <section className="bg-gradient-to-r from-marca to-[#0369a1] px-4 py-12 sm:py-16 text-center text-white sm:px-6">
         <div className="mx-auto max-w-4xl">
           <p className="flex items-center justify-center gap-2 text-xs font-medium tracking-wide uppercase">
             <IconeCadeado className="h-3.5 w-3.5" /> Conhecimento aberto à sociedade
           </p>
-          <h1 className="mt-6 text-4xl leading-tight font-bold sm:text-5xl">
+          <h1 className="mt-6 text-3xl leading-tight font-bold sm:text-5xl">
             Acervo Digital de Trabalhos de Conclusão de Curso
           </h1>
           <p className="mt-6 text-lg text-blue-50">
@@ -43,19 +43,21 @@ export default async function Home() {
           <form
             action="/acervo"
             method="GET"
-            className="mx-auto mt-8 flex max-w-3xl items-center gap-2 rounded-xl bg-white p-2 shadow-lg"
+            className="mx-auto mt-8 flex max-w-3xl flex-col gap-2 rounded-xl bg-white p-2 shadow-lg sm:flex-row sm:items-center"
           >
-            <IconeBusca className="ml-3 h-5 w-5 shrink-0 text-slate-500" />
-            <input
-              name="q"
-              type="search"
-              placeholder="Busque por título, resumo ou palavras-chave"
-              aria-label="Buscar no acervo"
-              className="min-w-0 flex-1 bg-transparent px-2 py-3 text-slate-900 outline-none placeholder:text-slate-500"
-            />
+            <div className="flex flex-1 items-center">
+              <IconeBusca className="ml-3 h-5 w-5 shrink-0 text-slate-500" />
+              <input
+                name="q"
+                type="search"
+                placeholder="Título, resumo ou palavras-chave"
+                aria-label="Buscar no acervo"
+                className="min-w-0 flex-1 bg-transparent px-2 py-3 text-slate-900 outline-none placeholder:text-slate-500"
+              />
+            </div>
             <button
               type="submit"
-              className="rounded-lg bg-marca px-5 py-3 text-sm font-semibold text-white hover:bg-marca-escuro"
+              className="rounded-lg bg-marca px-5 py-3 text-sm font-semibold text-white hover:bg-marca-escuro sm:py-3"
             >
               Pesquisar
             </button>
@@ -95,9 +97,9 @@ export default async function Home() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
-        <div className="flex items-end justify-between gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
           <div>
-            <h2 className="text-3xl font-bold text-slate-900">Conhecimento em movimento</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Conhecimento em movimento</h2>
             <p className="mt-2 text-slate-500">Conheça os trabalhos publicados recentemente.</p>
           </div>
           <Link

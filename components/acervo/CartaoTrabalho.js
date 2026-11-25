@@ -20,7 +20,7 @@ export default function CartaoTrabalho({ t }) {
         )}
       </div>
 
-      <h3 className="mt-4 min-h-[5.5rem] text-xl leading-snug font-semibold text-marca">
+      <h3 className="mt-4 text-xl md:min-h-[5.5rem] leading-snug font-semibold text-marca">
         <Link href={`/acervo/${t.id}`} className="hover:underline">
           {t.titulo}
         </Link>

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import CartaoTrabalho from '@/components/acervo/CartaoTrabalho'
 import OrdenarSelect from '@/components/acervo/OrdenarSelect'
+import PainelFiltros from '@/components/acervo/PainelFiltros'
 import { IconeBusca, IconeFiltro } from '@/components/layout/Icones'
 import { POR_PAGINA, buscarNoAcervo, opcoesDeFiltro } from '@/lib/server/acervo'
 import { ORDENACOES } from '@/lib/ordenacoes'
@@ -75,21 +76,23 @@ export default async function Acervo({ searchParams }) {
             </Link>{' '}
             / <span>Acervo</span>
           </nav>
-          <h1 className="mt-4 text-4xl font-bold text-marca">Explore o acervo</h1>
-          <p className="mt-3 text-lg text-slate-600">
+          <h1 className="mt-4 text-3xl font-bold text-marca sm:text-4xl">Explore o acervo</h1>
+          <p className="mt-3 text-base text-slate-600 sm:text-lg">
             Encontre ideias, referências e novos caminhos para sua pesquisa.
           </p>
 
-          <div className="mt-6 flex items-center gap-2 rounded-xl bg-white p-2 shadow-sm">
-            <IconeBusca className="ml-3 h-5 w-5 shrink-0 text-slate-500" />
-            <input
-              name="q"
-              type="search"
-              defaultValue={q}
-              placeholder="Busque por título, resumo ou palavras-chave"
-              aria-label="Buscar no acervo"
-              className="min-w-0 flex-1 bg-transparent px-2 py-3 text-slate-900 outline-none placeholder:text-slate-500"
-            />
+          <div className="mt-6 flex flex-col gap-2 rounded-xl bg-white p-2 shadow-sm sm:flex-row sm:items-center">
+            <div className="flex flex-1 items-center">
+              <IconeBusca className="ml-3 h-5 w-5 shrink-0 text-slate-500" />
+              <input
+                name="q"
+                type="search"
+                defaultValue={q}
+                placeholder="Título, resumo ou palavras-chave"
+                aria-label="Buscar no acervo"
+                className="min-w-0 flex-1 bg-transparent px-2 py-3 text-slate-900 outline-none placeholder:text-slate-500"
+              />
+            </div>
             <button
               type="submit"
               className="rounded-lg bg-marca px-5 py-3 text-sm font-semibold text-white hover:bg-marca-escuro"
@@ -100,7 +103,8 @@ export default async function Acervo({ searchParams }) {
         </div>
       </section>
 
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[256px_1fr]">
+      <div className="mx-auto grid max-w-6xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[256px_1fr] lg:gap-8 lg:py-10">
+        <PainelFiltros ativos={(curso ? 1 : 0) + anos.length + (palavra ? 1 : 0)}>
         <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-5">
           <h2 className="flex items-center gap-2 border-b border-slate-200 pb-4 font-semibold text-marca">
             <IconeFiltro className="h-5 w-5" /> Filtrar resultados
@@ -162,9 +166,10 @@ export default async function Acervo({ searchParams }) {
             Limpar filtros
           </Link>
         </aside>
+        </PainelFiltros>
 
         <section>
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <h2 className="text-2xl font-bold text-slate-900">Trabalhos publicados</h2>
               <p className="mt-1 text-sm text-slate-500">
@@ -195,7 +200,7 @@ export default async function Acervo({ searchParams }) {
           </div>
 
           {total > 0 && (
-            <nav className="mt-8 flex items-center justify-between gap-4" aria-label="Paginação">
+            <nav className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between" aria-label="Paginação">
               <p className="text-sm text-slate-500">
                 Mostrando {inicio}–{fim} de {total} {total === 1 ? 'trabalho' : 'trabalhos'}
               </p>
