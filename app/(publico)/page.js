@@ -1,111 +1,141 @@
 import Link from 'next/link'
-import FormBusca from '@/components/acervo/FormBusca'
-import { POR_PAGINA, buscarNoAcervo, opcoesDeFiltro } from '@/lib/server/acervo'
+import CartaoTrabalho from '@/components/acervo/CartaoTrabalho'
+import { IconeArquivo, IconeBusca, IconeCadeado, IconeCapelo, IconeSeta } from '@/components/layout/Icones'
+import { buscarNoAcervo, opcoesDeFiltro } from '@/lib/server/acervo'
 
 export const metadata = {
-  title: 'Acervo | Repositório de TCC',
-  description: 'Busque trabalhos de conclusão de curso publicados.',
+  title: 'Repositório de TCC • UFRN',
+  description: 'Acervo digital de trabalhos de conclusão de curso.',
 }
 
-// Texto simples da URL: pega só o primeiro valor e limita o tamanho
-function texto(valor, max = 100) {
-  const v = Array.isArray(valor) ? valor[0] : valor
-  return typeof v === 'string' ? v.trim().slice(0, max) : ''
-}
+// Página estática renovada a cada 60 s (ISR): não lê cookies nem searchParams.
+export const revalidate = 60
 
-// Monta a URL mantendo os filtros ao trocar de página
-function urlDaPagina(filtros, pagina) {
-  const p = new URLSearchParams()
-  if (filtros.q) p.set('q', filtros.q)
-  if (filtros.curso) p.set('curso', filtros.curso)
-  if (filtros.ano) p.set('ano', String(filtros.ano))
-  if (pagina > 1) p.set('pagina', String(pagina))
-  const s = p.toString()
-  return s ? `/?${s}` : '/'
-}
+const VALORES = [
+  { Icone: IconeCadeado, titulo: 'Acesso aberto', texto: 'Conhecimento sem barreiras' },
+  { Icone: IconeCapelo, titulo: 'Diversidade de saberes', texto: 'Produção de todos os cursos' },
+  { Icone: IconeArquivo, titulo: 'Memória acadêmica', texto: 'Pesquisa preservada e acessível' },
+]
 
-export default async function Home({ searchParams }) {
-  const sp = await searchParams // Next 15: searchParams é uma Promise
-
-  const q = texto(sp.q)
-  const curso = texto(sp.curso)
-  const anoNum = Number(texto(sp.ano, 4))
-  const ano = Number.isInteger(anoNum) && anoNum >= 2000 && anoNum <= 2100 ? anoNum : null
-  const paginaNum = Number(texto(sp.pagina, 5))
-  const pagina = Number.isInteger(paginaNum) && paginaNum >= 1 ? paginaNum : 1
-
-  const [{ trabalhos, total, error }, filtros] = await Promise.all([
-    buscarNoAcervo({ q, curso, ano, pagina }),
+export default async function Home() {
+  const [{ trabalhos }, { cursos }] = await Promise.all([
+    buscarNoAcervo({ porPagina: 3 }),
     opcoesDeFiltro(),
   ])
 
-  const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA))
-  const atuais = { q, curso, ano }
-  const filtrando = Boolean(q || curso || ano)
-
   return (
-    <section className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Acervo de trabalhos</h1>
-        <p className="mt-1 text-sm opacity-70">
-          Trabalhos de conclusão de curso aprovados e publicados.
-        </p>
-      </div>
+    <>
+      <section className="bg-gradient-to-r from-marca to-[#0369a1] px-4 py-16 text-center text-white sm:px-6">
+        <div className="mx-auto max-w-4xl">
+          <p className="flex items-center justify-center gap-2 text-xs font-medium tracking-wide uppercase">
+            <IconeCadeado className="h-3.5 w-3.5" /> Conhecimento aberto à sociedade
+          </p>
+          <h1 className="mt-6 text-4xl leading-tight font-bold sm:text-5xl">
+            Acervo Digital de Trabalhos de Conclusão de Curso
+          </h1>
+          <p className="mt-6 text-lg text-blue-50">
+            Explore a produção acadêmica da UFRN.
+            <br />
+            Ideias que conectam ensino, pesquisa e sociedade.
+          </p>
 
-      <FormBusca q={q} curso={curso} ano={ano} cursos={filtros.cursos} anos={filtros.anos} />
+          {/* Formulário de busca (receita 17): GET para /acervo?q=... */}
+          <form
+            action="/acervo"
+            method="GET"
+            className="mx-auto mt-8 flex max-w-3xl items-center gap-2 rounded-xl bg-white p-2 shadow-lg"
+          >
+            <IconeBusca className="ml-3 h-5 w-5 shrink-0 text-slate-500" />
+            <input
+              name="q"
+              type="search"
+              placeholder="Busque por título, resumo ou palavras-chave"
+              aria-label="Buscar no acervo"
+              className="min-w-0 flex-1 bg-transparent px-2 py-3 text-slate-900 outline-none placeholder:text-slate-500"
+            />
+            <button
+              type="submit"
+              className="rounded-lg bg-marca px-5 py-3 text-sm font-semibold text-white hover:bg-marca-escuro"
+            >
+              Pesquisar
+            </button>
+          </form>
 
-      {error && (
-        <p role="alert" className="rounded bg-red-100 px-3 py-2 text-sm text-red-800">
-          Não foi possível carregar o acervo agora. Tente novamente em instantes.
-        </p>
-      )}
-
-      {!error && (
-        <p className="text-sm opacity-70">
-          {total === 0
-            ? filtrando
-              ? 'Nenhum trabalho encontrado para esta busca.'
-              : 'Ainda não há trabalhos publicados.'
-            : `${total} ${total === 1 ? 'trabalho encontrado' : 'trabalhos encontrados'}`}
-        </p>
-      )}
-
-      <ul className="flex flex-col gap-4">
-        {trabalhos.map((t) => (
-          <li key={t.id} className="rounded border border-gray-300 px-4 py-4">
-            <Link href={`/acervo/${t.id}`} className="text-lg font-medium underline">
-              {t.titulo}
-            </Link>
-            <p className="mt-1 text-sm opacity-70">
-              {t.autor} · {t.curso} · {t.ano}
-              {t.orientador ? ` · Orientador: ${t.orientador}` : ''}
+          {cursos.length > 0 && (
+            <p className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-blue-100">
+              Explore:
+              {cursos.slice(0, 3).map((c) => (
+                <Link
+                  key={c}
+                  href={`/acervo?curso=${encodeURIComponent(c)}`}
+                  className="underline hover:text-white"
+                >
+                  {c}
+                </Link>
+              ))}
             </p>
-            {t.resumo && <p className="mt-2 line-clamp-3 text-sm">{t.resumo}</p>}
-          </li>
-        ))}
-      </ul>
+          )}
+        </div>
+      </section>
 
-      {totalPaginas > 1 && (
-        <nav className="flex items-center justify-between text-sm" aria-label="Paginação">
-          {pagina > 1 ? (
-            <Link href={urlDaPagina(atuais, pagina - 1)} className="underline">
-              &larr; Anterior
-            </Link>
-          ) : (
-            <span />
-          )}
-          <span>
-            Página {pagina} de {totalPaginas}
-          </span>
-          {pagina < totalPaginas ? (
-            <Link href={urlDaPagina(atuais, pagina + 1)} className="underline">
-              Próxima &rarr;
-            </Link>
-          ) : (
-            <span />
-          )}
-        </nav>
-      )}
-    </section>
+      <section className="border-b border-slate-200 bg-white">
+        <ul className="mx-auto grid max-w-6xl gap-6 px-4 py-6 sm:px-6 md:grid-cols-3">
+          {VALORES.map(({ Icone, titulo, texto }) => (
+            <li key={titulo} className="flex items-center gap-4">
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-marca-claro text-marca">
+                <Icone className="h-5 w-5" />
+              </span>
+              <span>
+                <span className="block font-semibold text-slate-900">{titulo}</span>
+                <span className="text-sm text-slate-500">{texto}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-3xl font-bold text-slate-900">Conhecimento em movimento</h2>
+            <p className="mt-2 text-slate-500">Conheça os trabalhos publicados recentemente.</p>
+          </div>
+          <Link
+            href="/acervo"
+            className="flex shrink-0 items-center gap-2 text-sm font-semibold text-marca hover:underline"
+          >
+            Ver todo o acervo <IconeSeta className="h-4 w-4 text-ciano" />
+          </Link>
+        </div>
+
+        {trabalhos.length === 0 ? (
+          <p className="mt-8 rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-500">
+            Ainda não há trabalhos publicados.
+          </p>
+        ) : (
+          <div className="mt-8 grid gap-6 md:grid-cols-3">
+            {trabalhos.map((t) => (
+              <CartaoTrabalho key={t.id} t={t} />
+            ))}
+          </div>
+        )}
+
+        <div className="mt-12 flex flex-col gap-6 rounded-2xl bg-marca-claro p-8 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-marca">Sua pesquisa faz parte dessa história.</h2>
+            <p className="mt-2 text-slate-600">
+              Um espaço para preservar a produção acadêmica e compartilhar o conhecimento construído na
+              UFRN.
+            </p>
+          </div>
+          <Link
+            href="/acervo"
+            className="flex shrink-0 items-center justify-center gap-2 rounded-lg bg-marca px-6 py-3 text-sm font-semibold text-white hover:bg-marca-escuro"
+          >
+            <IconeSeta className="h-4 w-4" /> Explorar o acervo
+          </Link>
+        </div>
+      </section>
+    </>
   )
 }
