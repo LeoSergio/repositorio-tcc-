@@ -1,8 +1,9 @@
 import { redirect } from 'next/navigation'
+import CartaoAuth from '@/components/auth/CartaoAuth'
 import { getSessao } from '@/lib/auth'
 import { sair } from '@/app/actions/authActions'
 
-export const metadata = { title: 'Perfil não encontrado | Repositório de TCC' }
+export const metadata = { title: 'Perfil não encontrado | Repositório de TCC • UFRN' }
 
 // Caso raro: a conta existe no login, mas não tem perfil no banco
 // (por exemplo, foi criada antes de o esquema ser instalado).
@@ -12,17 +13,20 @@ export default async function PaginaSemPerfil() {
   if (perfil) redirect('/painel')
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-4 px-4">
-      <h1 className="text-2xl font-semibold">Perfil não encontrado</h1>
-      <p className="text-sm">
+    <CartaoAuth>
+      <h1 className="text-2xl font-bold text-marca">Perfil não encontrado</h1>
+      <p className="mt-3 mb-6 text-sm text-slate-600">
         Sua conta ({user.email}) entrou, mas não tem um perfil no sistema. Peça à administração para
         recriar a conta e tente de novo.
       </p>
       <form action={sair}>
-        <button type="submit" className="rounded border border-gray-400 px-4 py-2 text-sm">
+        <button
+          type="submit"
+          className="rounded-lg border border-slate-300 px-5 py-3 text-sm font-semibold text-marca hover:bg-marca-claro"
+        >
           Sair
         </button>
       </form>
-    </main>
+    </CartaoAuth>
   )
 }
