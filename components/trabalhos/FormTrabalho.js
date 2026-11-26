@@ -3,8 +3,15 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import CampoPdf from '@/components/trabalhos/CampoPdf'
 
 const TAMANHO_MAXIMO = 20 * 1024 * 1024 // 20 MB
+
+// crypto.randomUUID() só existe em HTTPS ou localhost. getRandomValues funciona em qualquer endereço.
+function gerarId() {
+  const bytes = crypto.getRandomValues(new Uint8Array(16))
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')
+}
 
 async function chamarApi(url, metodo, corpo) {
   const res = await fetch(url, {
@@ -69,7 +76,7 @@ export default function FormTrabalho({ trabalho = null, cursos, orientadores }) 
         } = await supabase.auth.getUser()
         if (!user) throw new Error('Sessão expirada. Entre novamente.')
 
-        const caminho = `${user.id}/${id}/${crypto.randomUUID()}.pdf`
+        const caminho = `${user.id}/${id}/${gerarId()}.pdf`
         const { error } = await supabase.storage
           .from('trabalhos')
           .upload(caminho, arquivo, { contentType: 'application/pdf' })
@@ -92,11 +99,13 @@ export default function FormTrabalho({ trabalho = null, cursos, orientadores }) 
     }
   }
 
-  const campo = 'rounded border border-gray-300 bg-white px-3 py-2 text-black'
+  const campo =
+    'rounded-lg border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 placeholder:text-slate-500 focus:border-marca focus:outline-2 focus:outline-marca/30'
+  const rotulo = 'flex flex-col gap-2 text-sm font-medium text-slate-900'
 
   return (
     <form onSubmit={aoEnviar} className="flex flex-col gap-4">
-      <label className="flex flex-col gap-1 text-sm">
+      <label className={rotulo}>
         Título
         <input
           name="titulo"
@@ -108,7 +117,7 @@ export default function FormTrabalho({ trabalho = null, cursos, orientadores }) 
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className={rotulo}>
         Resumo
         <textarea
           name="resumo"
@@ -119,7 +128,7 @@ export default function FormTrabalho({ trabalho = null, cursos, orientadores }) 
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className={rotulo}>
         Palavras-chave (separadas por vírgula)
         <input
           name="palavras_chave"
@@ -129,7 +138,7 @@ export default function FormTrabalho({ trabalho = null, cursos, orientadores }) 
       </label>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <label className="flex flex-col gap-1 text-sm">
+        <label className={rotulo}>
           Ano
           <input
             name="ano"
@@ -141,7 +150,7 @@ export default function FormTrabalho({ trabalho = null, cursos, orientadores }) 
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className={rotulo}>
           Curso
           <select name="curso_id" defaultValue={trabalho?.curso_id ?? ''} className={campo}>
             <option value="">Selecione...</option>
@@ -153,7 +162,7 @@ export default function FormTrabalho({ trabalho = null, cursos, orientadores }) 
           </select>
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className={rotulo}>
           Orientador
           <select
             name="orientador_id"
@@ -170,28 +179,20 @@ export default function FormTrabalho({ trabalho = null, cursos, orientadores }) 
         </label>
       </div>
 
-      <label className="flex flex-col gap-1 text-sm">
-        Arquivo PDF (máx. 20 MB)
-        <input name="arquivo" type="file" accept="application/pdf" className="text-sm" />
-        {trabalho?.arquivo_path && (
-          <span className="text-xs opacity-70">
-            Já existe um PDF enviado. Escolha outro arquivo apenas se quiser substituí-lo.
-          </span>
-        )}
-      </label>
+      <CampoPdf jaTemArquivo={Boolean(trabalho?.arquivo_path)} />
 
-      <label className="flex items-start gap-2 text-sm">
+      <label className="flex items-start gap-3 text-sm text-slate-700">
         <input
           name="autorizacao_publicacao"
           type="checkbox"
           defaultChecked={trabalho?.autorizacao_publicacao ?? false}
-          className="mt-1"
+          className="mt-0.5 h-4 w-4"
         />
         Autorizo a publicação deste trabalho no repositório público.
       </label>
 
       {erro && (
-        <p role="alert" className="rounded bg-red-100 px-3 py-2 text-sm text-red-800">
+        <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">
           {erro}
         </p>
       )}
@@ -202,7 +203,7 @@ export default function FormTrabalho({ trabalho = null, cursos, orientadores }) 
           name="acao"
           value="salvar"
           disabled={pendente}
-          className="rounded border border-blue-700 px-4 py-2 font-medium text-blue-700 hover:bg-blue-50 disabled:opacity-60"
+          className="rounded-lg border border-marca px-5 py-3 font-semibold text-marca hover:bg-marca-claro disabled:opacity-60"
         >
           {pendente ? 'Aguarde...' : 'Salvar rascunho'}
         </button>
@@ -211,7 +212,7 @@ export default function FormTrabalho({ trabalho = null, cursos, orientadores }) 
           name="acao"
           value="enviar"
           disabled={pendente}
-          className="rounded bg-blue-700 px-4 py-2 font-medium text-white hover:bg-blue-800 disabled:opacity-60"
+          className="rounded-lg bg-marca px-5 py-3 font-semibold text-white hover:bg-marca-escuro disabled:opacity-60"
         >
           Salvar e enviar para revisão
         </button>

@@ -34,20 +34,24 @@ export default function FormRevisao({ id }) {
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <label className="flex flex-col gap-1 text-sm">
-        Comentário (obrigatório ao devolver)
+    <div className="flex flex-col gap-4">
+      <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
+        <span>Comentário do orientador (obrigatório ao devolver)</span>
         <textarea
           value={texto}
           onChange={(e) => setTexto(e.target.value)}
           rows={5}
           maxLength={3000}
-          className="rounded border border-gray-300 bg-white px-3 py-2 text-black"
+          placeholder="Descreva observações, elogios ou ajustes necessários no trabalho..."
+          className="rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#0095DB] focus:outline-none focus:ring-2 focus:ring-[#0095DB]/20"
         />
+        <span className="self-end text-xs font-normal text-slate-400">
+          {texto.length}/3000 caracteres
+        </span>
       </label>
 
       {erro && (
-        <p role="alert" className="rounded bg-red-100 px-3 py-2 text-sm text-red-800">
+        <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3.5 py-2.5 text-sm text-red-800">
           {erro}
         </p>
       )}
@@ -57,15 +61,15 @@ export default function FormRevisao({ id }) {
           type="button"
           onClick={() => decidir('aprovado')}
           disabled={pendente}
-          className="rounded bg-green-700 px-4 py-2 font-medium text-white hover:bg-green-800 disabled:opacity-60"
+          className="rounded-lg bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-emerald-800 disabled:opacity-60"
         >
-          Aprovar
+          {pendente ? 'Salvando...' : 'Aprovar trabalho'}
         </button>
         <button
           type="button"
           onClick={() => decidir('devolvido')}
           disabled={pendente}
-          className="rounded border border-red-700 px-4 py-2 font-medium text-red-700 hover:bg-red-50 disabled:opacity-60"
+          className="rounded-lg border border-amber-600 bg-white px-5 py-2.5 text-sm font-semibold text-amber-700 transition-colors hover:bg-amber-50 disabled:opacity-60"
         >
           Devolver ao aluno
         </button>
