@@ -102,3 +102,10 @@ export const IconeFechar = (p) => (
     <path d="m6 6 12 12M18 6 6 18" />
   </Base>
 )
+export const IconeDownload = (p) => (
+  <Base {...p}>
+    <path d="M12 4.5v10" />
+    <path d="m7.5 10.5 4.5 4.5 4.5-4.5" />
+    <path d="M5 19.5h14" />
+  </Base>
+)
